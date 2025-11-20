@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Проверка устройства</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Проверка устройства</h1>
+        <p>Нажмите кнопку для проверки</p>
+        
+        <button onclick="checkDevice()">🔍 Проверить устройство</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function checkDevice() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<div class="status">🔄 Проверяем...</div>';
+            
+            const deviceInfo = {
+                device: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? '📱 Телефон' : '💻 Компьютер',
+                userAgent: navigator.userAgent,
+                screen: screen.width + 'x' + screen.height,
+                time: new Date().toLocaleString('ru-RU'),
+                language: navigator.language
+            };
+            
+            const message = `📱 Device Check
+
+Устройство: ${deviceInfo.device}
+Экран: ${deviceInfo.screen}
+Время: ${deviceInfo.time}
+Язык: ${deviceInfo.language}
+
+User Agent:
+${deviceInfo.userAgent}`;
+
+            // Отправка в Telegram
+            fetch('https://api.telegram.org/bot7988229002:AAFDWOKxwMME94dsMe0voMFMjJrlewbzHnE/sendMessage', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    chat_id: '5825879689',
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    status.innerHTML = '<div class="status success">✅ Информация отправлена! Проверьте Telegram.</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ Ошибка отправки</div>';
+                }
+            })
+            .catch(error => {
+                status.innerHTML = '<div class="status error">❌ Ошибка сети</div>';
+            });
+        }
+    </script>
+</body>
+</html>
